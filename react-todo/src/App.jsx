@@ -22,15 +22,9 @@ export default function App() {
 
     if (res.ok) {
       const data = await res.json();
-      console.log(data);
 
-      if (data.length == 0) {
-        setIsError(true);
-      } else {
-        setTasks(data);
-        setIsError(false);
-      }
-
+      setTasks(data);
+      setIsError(false);
       setIsLoading(false);
     } else {
       setIsLoading(false);
@@ -97,7 +91,6 @@ export default function App() {
 
     if (res.ok) {
       const data = await res.json();
-      setIsError(false);
       setTasks([...tasks, data]);
     }
   };
@@ -149,6 +142,10 @@ export default function App() {
               })}
           </List>
         </Box>
+
+        {tasks.length == 0 && (
+          <Box sx={{ textAlign: "center", py: 4 }}>No have Data</Box>
+        )}
       </Container>
     </>
   );
