@@ -13,11 +13,16 @@ const mongo = new MongoClient("mongodb://127.0.0.1");
 const db = mongo.db("todo");
 
 app.get("/tasks", async function (req, res) {
-  const data = await db.collection("tasks").find().toArray();
-
-  setTimeout(() => {
+  try {
+    const data = await db.collection("tasks").find().toArray();
     res.json(data);
-  }, 2000);
+  } catch (err) {
+    res.status(500).json({ msg: "Something went wrong!" });
+  }
+
+  //   setTimeout(() => {
+  //     res.json(data);
+  //   }, 2000);
 });
 
 app.post("/tasks", async function (req, res) {

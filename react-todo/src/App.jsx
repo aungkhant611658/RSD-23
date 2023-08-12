@@ -15,14 +15,31 @@ export default function App() {
   const [tasks, setTasks] = useState([]);
   const [showDrawer, setShowDrawer] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
+
+  const fetchData = async () => {
+    const res = await fetch(url);
+
+    if (res.ok) {
+      const data = await res.json();
+      console.log(data);
+
+      if (data.length == 0) {
+        setIsError(true);
+      } else {
+        setTasks(data);
+        setIsError(false);
+      }
+
+      setIsLoading(false);
+    } else {
+      setIsLoading(false);
+      setIsError(true);
+    }
+  };
 
   useEffect(() => {
-    fetch(url)
-      .then((res) => res.json())
-      .then((data) => {
-        setTasks(data);
-        setIsLoading(false);
-      });
+    fetchData();
   }, []);
 
   const toggleDrawer = () => (event) => {
@@ -57,9 +74,19 @@ export default function App() {
     );
   };
 
-  const addTask = (subject) => {
-    const _id = tasks[tasks.length - 1]._id + 1;
-    setTasks([...tasks, { _id, subject, done: false }]);
+  const addTask = async (subject) => {
+    const res = await fetch(url, {
+      method: "POST",
+      body: JSON.stringify({ subject }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      setTasks([...tasks, data]);
+    }
   };
 
   return (
@@ -74,6 +101,7 @@ export default function App() {
 
       <Container>
         {isLoading && <Box sx={{ textAlign: "center", py: 4 }}>Loading...</Box>}
+        {isError && <Box sx={{ textAlign: "center", py: 4 }}>Error...</Box>}
 
         <Box sx={{ mx: { lg: 20, md: 10 } }}>
           <Form addTask={addTask} />
