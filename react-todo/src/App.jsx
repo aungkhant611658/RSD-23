@@ -12,97 +12,103 @@ import { Container } from "@mui/material";
 const url = "http://localhost:8888/tasks";
 
 export default function App() {
-	const [tasks, setTasks] = useState([]);
-	const [showDrawer, setShowDrawer] = useState(false);
+  const [tasks, setTasks] = useState([]);
+  const [showDrawer, setShowDrawer] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-	useEffect(() => {
-		fetch(url)
-			.then(res => res.json())
-			.then(data => setTasks(data));
-	}, []);
+  useEffect(() => {
+    fetch(url)
+      .then((res) => res.json())
+      .then((data) => {
+        setTasks(data);
+        setIsLoading(false);
+      });
+  }, []);
 
-	const toggleDrawer = () => event => {
-		if (
-			event.type === "keydown" &&
-			(event.key === "Tab" || event.key === "Shift")
-		) {
-			return;
-		}
+  const toggleDrawer = () => (event) => {
+    if (
+      event.type === "keydown" &&
+      (event.key === "Tab" || event.key === "Shift")
+    ) {
+      return;
+    }
 
-		setShowDrawer(!showDrawer);
-	};
+    setShowDrawer(!showDrawer);
+  };
 
-	const clear = () => {
-		setTasks(tasks.filter(task => !task.done));
-	};
+  const clear = () => {
+    setTasks(tasks.filter((task) => !task.done));
+  };
 
-	const deleteTask = _id => {
-		setTasks(tasks.filter(task => task._id !== _id));
-	};
+  const deleteTask = (_id) => {
+    setTasks(tasks.filter((task) => task._id !== _id));
+  };
 
-	const toggleTask = _id => {
-		fetch(`${url}/${_id}/toggle`, {
-			method: 'PUT'
-		});
+  const toggleTask = (_id) => {
+    fetch(`${url}/${_id}/toggle`, {
+      method: "PUT",
+    });
 
-		setTasks(
-			tasks.map(task => {
-				if (task._id === _id) task.done = !task.done;
-				return task;
-			}),
-		);
-	};
+    setTasks(
+      tasks.map((task) => {
+        if (task._id === _id) task.done = !task.done;
+        return task;
+      })
+    );
+  };
 
-	const addTask = subject => {
-		const _id = tasks[tasks.length - 1]._id + 1;
-		setTasks([...tasks, { _id, subject, done: false }]);
-	};
+  const addTask = (subject) => {
+    const _id = tasks[tasks.length - 1]._id + 1;
+    setTasks([...tasks, { _id, subject, done: false }]);
+  };
 
-	return (
-		<>
-			<Header
-				count={tasks.filter(item => !item.done).length}
-				clear={clear}
-				toggleDrawer={toggleDrawer}
-			/>
+  return (
+    <>
+      <Header
+        count={tasks.filter((item) => !item.done).length}
+        clear={clear}
+        toggleDrawer={toggleDrawer}
+      />
 
-			<MainDrawer showDrawer={showDrawer} toggleDrawer={toggleDrawer} />
+      <MainDrawer showDrawer={showDrawer} toggleDrawer={toggleDrawer} />
 
-			<Container>
-				<Box sx={{ mx: { lg: 20, md: 10 } }}>
-					<Form addTask={addTask} />
+      <Container>
+        {isLoading && <Box sx={{ textAlign: "center", py: 4 }}>Loading...</Box>}
 
-					<List sx={{ mt: 4 }}>
-						{tasks
-							.filter(task => !task.done)
-							.map(task => {
-								return (
-									<Item
-										key={task._id}
-										task={task}
-										deleteTask={deleteTask}
-										toggleTask={toggleTask}
-									/>
-								);
-							})}
-					</List>
+        <Box sx={{ mx: { lg: 20, md: 10 } }}>
+          <Form addTask={addTask} />
 
-					<List>
-						{tasks
-							.filter(task => task.done)
-							.map(task => {
-								return (
-									<Item
-										key={task._id}
-										task={task}
-										deleteTask={deleteTask}
-										toggleTask={toggleTask}
-									/>
-								);
-							})}
-					</List>
-				</Box>
-			</Container>
-		</>
-	);
+          <List sx={{ mt: 4 }}>
+            {tasks
+              .filter((task) => !task.done)
+              .map((task) => {
+                return (
+                  <Item
+                    key={task._id}
+                    task={task}
+                    deleteTask={deleteTask}
+                    toggleTask={toggleTask}
+                  />
+                );
+              })}
+          </List>
+
+          <List>
+            {tasks
+              .filter((task) => task.done)
+              .map((task) => {
+                return (
+                  <Item
+                    key={task._id}
+                    task={task}
+                    deleteTask={deleteTask}
+                    toggleTask={toggleTask}
+                  />
+                );
+              })}
+          </List>
+        </Box>
+      </Container>
+    </>
+  );
 }
