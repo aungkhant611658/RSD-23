@@ -53,25 +53,37 @@ export default function App() {
     setShowDrawer(!showDrawer);
   };
 
-  const clear = () => {
-    setTasks(tasks.filter((task) => !task.done));
+  const clear = async () => {
+    const res = await fetch(url, {
+      method: "DELETE",
+    });
+
+    if (res.ok) {
+      setTasks(tasks.filter((task) => !task.done));
+    }
   };
 
-  const deleteTask = (_id) => {
-    setTasks(tasks.filter((task) => task._id !== _id));
+  const deleteTask = async (_id) => {
+    const res = await fetch(`${url}/${_id}`, { method: "DELETE" });
+
+    if (res.ok) {
+      setTasks(tasks.filter((task) => task._id !== _id));
+    }
   };
 
-  const toggleTask = (_id) => {
-    fetch(`${url}/${_id}/toggle`, {
+  const toggleTask = async (_id) => {
+    const res = await fetch(`${url}/${_id}/toggle`, {
       method: "PUT",
     });
 
-    setTasks(
-      tasks.map((task) => {
-        if (task._id === _id) task.done = !task.done;
-        return task;
-      })
-    );
+    if (res.ok) {
+      setTasks(
+        tasks.map((task) => {
+          if (task._id === _id) task.done = !task.done;
+          return task;
+        })
+      );
+    }
   };
 
   const addTask = async (subject) => {
@@ -85,6 +97,7 @@ export default function App() {
 
     if (res.ok) {
       const data = await res.json();
+      setIsError(false);
       setTasks([...tasks, data]);
     }
   };
