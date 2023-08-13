@@ -1,35 +1,41 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import Header from "./Header";
 import MainDrawer from "./MainDrawer";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Outlet } from "react-router-dom";
+import { fetchTasks } from "./features/todo/todoSlice";
 
 export default function App() {
-	const tasks = useSelector(state => state.todo.tasks);
+  const tasks = useSelector((state) => state.todo.tasks);
+  const dispatch = useDispatch();
 
-	const [showDrawer, setShowDrawer] = useState(false);
-	const toggleDrawer = () => event => {
-		if (
-			event.type === "keydown" &&
-			(event.key === "Tab" || event.key === "Shift")
-		) {
-			return;
-		}
+  useEffect(() => {
+    dispatch(fetchTasks());
+  }, []);
 
-		setShowDrawer(!showDrawer);
-	};
+  const [showDrawer, setShowDrawer] = useState(false);
+  const toggleDrawer = () => (event) => {
+    if (
+      event.type === "keydown" &&
+      (event.key === "Tab" || event.key === "Shift")
+    ) {
+      return;
+    }
 
-	return (
-		<>
-			<Header
-				count={tasks.filter(item => !item.done).length}
-				toggleDrawer={toggleDrawer}
-			/>
+    setShowDrawer(!showDrawer);
+  };
 
-			<MainDrawer showDrawer={showDrawer} toggleDrawer={toggleDrawer} />
+  return (
+    <>
+      <Header
+        count={tasks.filter((item) => !item.done).length}
+        toggleDrawer={toggleDrawer}
+      />
 
-			<Outlet />
-		</>
-	);
+      <MainDrawer showDrawer={showDrawer} toggleDrawer={toggleDrawer} />
+
+      <Outlet />
+    </>
+  );
 }
