@@ -7,7 +7,7 @@ import { Outlet } from "react-router-dom";
 import { fetchTasks } from "./features/todo/todoSlice";
 
 export default function App() {
-  const tasks = useSelector((state) => state.todo.tasks);
+  const { tasks, loading } = useSelector((state) => state.todo);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -33,9 +33,17 @@ export default function App() {
         toggleDrawer={toggleDrawer}
       />
 
+      {loading && (
+        <div style={{ textAlign: "center", marginBottom: 20 }}>Loading...</div>
+      )}
+
       <MainDrawer showDrawer={showDrawer} toggleDrawer={toggleDrawer} />
 
       <Outlet />
+
+      {tasks.length == 0 && (
+        <div style={{ textAlign: "center" }}>No have Data</div>
+      )}
     </>
   );
 }

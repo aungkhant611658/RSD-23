@@ -16,13 +16,13 @@ app.get("/tasks", async function (req, res) {
   try {
     const data = await db.collection("tasks").find().toArray();
     res.json(data);
+    // const data = await db.collection("tasks").find().toArray();
+    // setTimeout(() => {
+    //   res.json(data);
+    // }, 2000);
   } catch (err) {
     res.status(500).json({ msg: "Something went wrong!" });
   }
-
-  //   setTimeout(() => {
-  //     res.json(data);
-  //   }, 2000);
 });
 
 app.post("/tasks", async function (req, res) {
