@@ -42,15 +42,18 @@ export const todoSlice = createSlice({
     //   ];
     // },
     del: (state, action) => {
+      fetch(`${url}/${action.payload}`, { method: "DELETE" });
       state.tasks = state.tasks.filter((item) => item._id !== action.payload);
     },
     toggle: (state, action) => {
+      fetch(`${url}/${action.payload}/toggle`, { method: "PUT" });
       state.tasks = state.tasks.map((item) => {
         if (item._id === action.payload) item.done = !item.done;
         return item;
       });
     },
     clear: (state) => {
+      fetch(`${url}`, { method: "DELETE" });
       state.tasks = state.tasks.filter((item) => !item.done);
     },
   },
