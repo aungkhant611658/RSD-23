@@ -45,11 +45,11 @@ export default function Home() {
                 <Box>
                   <Box sx={{ mb: 1 }}>
                     <Typography sx={{ mr: 1 }} component="span">
-                      <b>Miles Morales</b>
+                      <b>{post.user && post.user[0].name}</b>
                     </Typography>
 
                     <Typography component="span" sx={{ color: "grey" }}>
-                      @miles
+                      @{post.user && post.user[0].handle}
                     </Typography>
 
                     <Typography component="span" sx={{ ml: 1, color: "green" }}>

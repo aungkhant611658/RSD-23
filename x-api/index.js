@@ -20,7 +20,7 @@ app.get("/posts", async function (req, res) {
     const data = await xposts
       .aggregate([
         {
-          $lootup: {
+          $lookup: {
             localField: "owner",
             from: "users",
             foreignField: "_id",
