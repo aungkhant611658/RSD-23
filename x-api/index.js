@@ -16,14 +16,28 @@ const xposts = xdb.collection("posts");
 const xusers = xdb.collection("users");
 
 app.get("/posts", async function (req, res) {
-	try {
-		const data = await xposts.find().limit(20).toArray();
-		return res.json(data);
-	} catch (err) {
-		return res.sendStatus(500);
-	}
+  try {
+    const data = await xposts
+      .aggregate([
+        {
+          $lootup: {
+            localField: "owner",
+            from: "users",
+            foreignField: "_id",
+            as: "user",
+          },
+        },
+        {
+          $limit: 20,
+        },
+      ])
+      .toArray();
+    return res.json(data);
+  } catch (err) {
+    return res.sendStatus(500);
+  }
 });
 
 app.listen(8888, () => {
-	console.log("X api running at 8888");
+  console.log("X api running at 8888");
 });
